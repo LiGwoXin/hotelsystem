@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.hotelsystem.mapper.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.sdau.hotelsystem.domain.Order">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="roomId" column="room_id" jdbcType="INTEGER"/>
+            <result property="room" column="room" jdbcType="VARCHAR"/>
+            <result property="memberId" column="member_id" jdbcType="INTEGER"/>
+            <result property="member" column="member" jdbcType="VARCHAR"/>
+            <result property="checkInTime" column="check_in_time" jdbcType="TIMESTAMP"/>
+            <result property="days" column="days" jdbcType="INTEGER"/>
+            <result property="checkOutTime" column="check_out_time" jdbcType="TIMESTAMP"/>
+            <result property="customersName" column="customers_name" jdbcType="VARCHAR"/>
+            <result property="customersNum" column="customers_num" jdbcType="INTEGER"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
+            <result property="changeUser" column="change_user" jdbcType="VARCHAR"/>
+            <result property="cardType" column="card_type" jdbcType="TINYINT"/>
+            <result property="cardNum" column="card_num" jdbcType="VARCHAR"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,room_id,member_id,
+        check_in_time,days,check_out_time,
+        customers_name,customers_num,tel,
+        total_price,change_user,card_type,
+        card_num,remark,create_time,
+        status
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT `order`.*,room.num room FROM `order` INNER JOIN room ON `order`.room_id = room.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY `status` ASC
+    </select>
+
+    <select id="selectMemberByMemberId" resultType="string">
+SELECT member_grade.`name` FROM member INNER JOIN member_grade ON member.grade_id = member_grade.id
+where
+member.id =  #{memberId,jdbcType=NUMERIC}
+</select>
+    <select id="selectMemberByCustomersName" resultType="string">
+SELECT member_grade.`name` FROM member INNER JOIN member_grade ON member.grade_id = member_grade.id
+where
+member.name =  #{customersName,jdbcType=VARCHAR}
+</select>
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
+        insert into `order`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="room != null">room,</if>
+            <if test="memberId != null">member_id,</if>
+            <if test="member != null">member,</if>
+            <if test="checkInTime != null">check_in_time,</if>
+            <if test="days != null">days,</if>
+            <if test="checkOutTime != null">check_out_time,</if>
+            <if test="customersName != null">customers_name,</if>
+            <if test="customersNum != null">customers_num,</if>
+            <if test="tel != null">tel,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="changeUser != null">change_user,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="cardNum != null">card_num,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="roomId != null">#{roomId,jdbcType=INTEGER},</if>
+            <if test="room != null">#{room,jdbcType=VARCHAR},</if>
+            <if test="memberId != null">#{memberId,jdbcType=INTEGER},</if>
+            <if test="member != null">#{member,jdbcType=VARCHAR},</if>
+            <if test="checkInTime != null">#{checkInTime,jdbcType=TIMESTAMP},</if>
+            <if test="days != null">#{days,jdbcType=INTEGER},</if>
+            <if test="checkOutTime != null">#{checkOutTime,jdbcType=TIMESTAMP},</if>
+            <if test="customersName != null">#{customersName,jdbcType=VARCHAR},</if>
+            <if test="customersNum != null">#{customersNum,jdbcType=INTEGER},</if>
+            <if test="tel != null">#{tel,jdbcType=VARCHAR},</if>
+            <if test="totalPrice != null">#{totalPrice,jdbcType=DECIMAL},</if>
+            <if test="changeUser != null">#{changeUser,jdbcType=VARCHAR},</if>
+            <if test="cardType != null">#{cardType,jdbcType=TINYINT},</if>
+            <if test="cardNum != null">#{cardNum,jdbcType=VARCHAR},</if>
+            <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="status != null">#{status,jdbcType=TINYINT},</if>
+        </trim>
+    </insert>
+
+    <select id="incomeday" resultType='map'>
+		select a.startdate,sum(a.money) as money from (
+		select DATE_FORMAT(create_time,'%Y-%m-%d') as startdate,total_price money from `order`
+		) as a group by startdate order by startdate asc
+	</select>
+
+    <select id="incomemonth" resultType='map'>
+		select a.startdate,sum(a.money) as money from (
+		select DATE_FORMAT(create_time,'%Y-%m') as startdate,total_price money from `order`
+		) as a group by startdate order by startdate asc
+	</select>
+
+    <select id="incomeyear" resultType='map'>
+		select a.startdate,sum(a.money) as money from (
+		select DATE_FORMAT(create_time,'%Y') as startdate,total_price money from `order`
+		) as a group by startdate order by startdate asc
+	</select>
+    <update id="updateStatusById">
+update `order`
+ set status = #{status,jdbcType=NUMERIC}
+where
+id = #{id,jdbcType=NUMERIC}
+</update>
+
+</mapper>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<style>
+
+	.item{
+		width: 100px;
+		height: 100px;
+		border-radius:5px;
+		text-align:center;
+		/*line-height:100px;*/
+		margin: 10px;
+		float: left;
+	}
+	.red{
+		background-color: rgba(255, 51, 156, 0.5);
+	}
+	.purple{
+		background-color: rgba(153, 51, 156, 0.5);
+	}
+	.blue{
+		background-color: rgba(82, 51, 156, 0.5);
+	}
+	.green{
+		background-color: #19FFFC33 ;
+	}
+</style>
+<body>
+<div id="content"></div>
+</body>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../js/base.js"></script>
+<script>
+	let roomId = getParam("roomId");
+	layui.use(['form', 'layer', 'table', 'laytpl'], function() {
+		var form = layui.form,
+				layer = parent.layer === undefined ? layui.layer : top.layer,
+				$ = layui.jquery;
+
+		$(function(){
+			var orderinfo={};
+			$.ajax({
+				url:"info",
+				data:{roomId:roomId},
+				type: "post",
+				async:false,
+				success:function(result){
+					orderinfo=JSON.stringify(result);
+				}
+			});
+			for (var i = 1; i <= 30; i++) {
+				var date = new Date();
+				date=date.setDate(date.getDate()+i);
+				date=new Date(date);
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				if(month<10){
+					month="0"+month;
+				}
+				var day = date.getDate();
+				if(day<10){
+					day="0"+day;
+				}
+				var date_text = year + "-" + month + "-" + day;
+
+			var index=orderinfo.indexOf(date_text);
+				if(index==-1){
+					$('#content').append('<div class="item red">'
+							+'<div style="margin-top: 30px">'+date_text+'<br/>'+'空房间'+'</div></div>');
+				}else{
+					$('#content').append('<div class="item blue">'
+							+'<div style="margin-top: 30px">'+date_text+'<br/>'+'已占用'+'</div></div>');
+				}
+			}
+		})
+	})
+</script>
+</html>

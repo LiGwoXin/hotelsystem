@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<style>
+
+	.item{
+		width: 100px;
+		height: 100px;
+		border-radius:5px;
+		text-align:center;
+		/*line-height:100px;*/
+		margin: 10px;
+		float: left;
+	}
+	.red{
+		background-color: rgba(255, 51, 156, 0.5);
+	}
+	.purple{
+		background-color: rgba(153, 51, 156, 0.5);
+	}
+	.blue{
+		background-color: rgba(82, 51, 156, 0.5);
+	}
+	.green{
+		background-color: #19FFFC33 ;
+	}
+</style>
+<body>
+<div id="content"></div>
+</body>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script>
+	layui.use(['form', 'layer', 'table', 'laytpl'], function() {
+		var form = layui.form,
+				layer = parent.layer === undefined ? layui.layer : top.layer,
+				$ = layui.jquery;
+
+		$(function(){
+			$.ajax({
+				type:'post',
+				data:{},
+				dataType:'json',
+				url: '../Room/all',
+				async:false,
+				success:function (res) {
+					var code = res.code;
+					if(code === 0){
+						var data = res.data;
+						var length = data.length;
+						for (var i = 0; i < length; i++) {
+							if(data[i].status==0){//空房间
+								$('#content').append('<div id="'+ data[i].id +'" class="item red" onclick="method(this)">'
+										+'<div style="margin-top: 20px">'+data[i].num +'<br/>'+data[i].type+'<br/>'+'空房间'+'</div></div>');
+							}else if(data[i].status==1){
+								$('#content').append('<div id="'+ data[i].id +'" class="item purple" onclick="method(this)">'
+										+'<div style="margin-top: 20px">'+data[i].num +'<br/>'+data[i].type+'<br/>'+'已预约'+'</div></div>');
+							}else if(data[i].status==2){
+								$('#content').append('<div id="'+ data[i].id +'" class="item blue" onclick="method(this)">'
+										+'<div style="margin-top: 20px">'+data[i].num +'<br/>'+data[i].type+'<br/>'+'已入住'+'</div></div>');
+							}else if(data[i].status==3){
+								$('#content').append('<div id="'+ data[i].id +'" class="item green" onclick="method(this)">'
+										+'<div style="margin-top: 20px">'+data[i].num +'<br/>'+data[i].type+'<br/>'+'未打扫卫生'+'</div></div>');
+							}
+
+						}
+					}else{
+						layer.msg(res.msg);
+					}
+				}
+			})
+		})
+
+		var method=function(o){
+			roomid=o.id;
+			var url="${pageContext.request.contextPath}/roommanagement/room.action?roomid="+roomid;
+			window.location.href=url;
+		}
+	})
+</script>
+</html>

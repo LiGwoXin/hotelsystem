@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.hotelsystem.mapper.ReservationMapper">
+
+    <resultMap id="BaseResultMap" type="com.sdau.hotelsystem.domain.Reservation">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="roomId" column="room_id" jdbcType="INTEGER"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="customersName" column="customers_name" jdbcType="VARCHAR"/>
+            <result property="customersNum" column="customers_num" jdbcType="INTEGER"/>
+            <result property="checkInTime" column="check_in_time" jdbcType="DATE"/>
+            <result property="checkOutTime" column="check_out_time" jdbcType="DATE"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="memberId" column="member_id" jdbcType="INTEGER"/>
+            <result property="member" column="member" jdbcType="VARCHAR"/>
+            <result property="room" column="room" jdbcType="VARCHAR"/>
+            <result property="changeUser" column="change_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,room_id,tel,
+        customers_name,customers_num,check_in_time,
+        check_out_time,create_time,status,
+        remark,member_id,change_user
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT reservation.*,room.num room FROM reservation INNER JOIN room ON reservation.room_id = room.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY `status` ASC
+    </select>
+
+    <select id="selectMemberByMemberId" resultType="string">
+SELECT member_grade.`name` FROM member INNER JOIN member_grade ON member.grade_id = member_grade.id
+where
+member.id =  #{memberId,jdbcType=NUMERIC}
+</select>
+    <select id="selectMemberNameByCustomersName" resultType="string">
+SELECT member_grade.`name` FROM member INNER JOIN member_grade ON member.grade_id = member_grade.id
+where
+member.name =  #{customersName,jdbcType=VARCHAR}
+</select>
+
+</mapper>

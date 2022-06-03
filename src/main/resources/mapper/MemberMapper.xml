@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.hotelsystem.mapper.MemberMapper">
+
+    <resultMap id="BaseResultMap" type="com.sdau.hotelsystem.domain.Member">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="num" column="num" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="gradeId" column="grade_id" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="changeUser" column="change_user" jdbcType="VARCHAR"/>
+            <result property="grade" column="grade" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,num,name,
+        tel,grade_id,status,
+        create_time,change_user
+    </sql>
+    <select id="list" resultMap="BaseResultMap">
+        SELECT member.*,member_grade.name grade FROM member INNER JOIN member_grade ON member.grade_id = member_grade.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY status
+    </select>
+</mapper>

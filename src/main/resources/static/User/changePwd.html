@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>修改密码</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../css/public.css">
+	<link rel="stylesheet" href="../css/use.css"  />
+</head>
+<body class="childrenBody">
+<form class="layui-form layui-row changePwd" style="padding: 20px 20px 10px 20px;background-color: #fff;">
+	<div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+		<!-- <div class="layui-input-block layui-red pwdTips">旧密码请输入“123456”，新密码必须两次输入一致才能提交</div> -->
+		<div class="layui-form-item">
+			<label class="layui-form-label">旧密码</label>
+			<div class="layui-input-block">
+				<input type="password" value="" placeholder="请输入旧密码" lay-verify="required|oldPwd" id="oldPwd"class="layui-input pwd">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">新密码</label>
+			<div class="layui-input-block">
+				<input type="password" value="" placeholder="请输入新密码" lay-verify="required|newPwd" id="newPwd" class="layui-input pwd">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">确认密码</label>
+			<div class="layui-input-block">
+				<input type="password" value="" placeholder="请确认密码" lay-verify="required|confirmPwd" id="confirmPwd" class="layui-input pwd">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<span class="layui-btn" lay-submit="changePwd" lay-filter="changePwd">立即修改</span>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script>
+	layui.use(['form', 'layer', 'upload', 'laydate'], function () {
+		let form = layui.form;
+		let $ = layui.jquery;
+		var layer = parent.layer === undefined ? layui.layer : top.layer;
+
+		//添加验证规则
+		form.verify({
+			oldPwd : function(value, item){
+				let flag="";
+				$.ajax({
+					type: "post",
+					url: 'isTrue',
+					async:false,//同步提交。不设置则默认异步，异步的话，最后执行ajax
+					data: {
+						password : value,
+					},
+					success: function(res) {
+						if(res.code == 1){
+							flag =  "原密码错误";
+						}
+					},
+					error: function(error) {
+						alert(error.msg);
+					}
+				});
+				return flag;
+			},
+			newPwd : function(value, item){
+				if(value.length < 6){
+					return "密码长度不能小于6位";
+				}
+			},
+			confirmPwd : function(value, item){
+				if(!new RegExp($("#newPwd").val()).test(value)){
+					return "两次输入密码不一致，请重新输入！";
+				}
+			}
+		})
+
+		//发送保存请求
+		form.on("submit(changePwd)",function(data){
+
+			$.post("changePwd",{
+				newPwd: $('#confirmPwd').val()
+			},function(res){
+				if(res.code==0){
+					layer.alert("修改成功!",{yes:function (index) {
+							layer.close(index);
+							parent.layer.closeAll();
+							parent.location.reload();
+						}});
+				}else{
+					layer.alert("原密码错误!",{yes:function (index) {
+							layer.close(index);
+							parent.layer.closeAll();
+							// parent.location.reload();
+						}});
+				}
+
+			})
+		})
+	})
+
+</script>
+</body>
+</html>

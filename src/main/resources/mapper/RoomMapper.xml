@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.hotelsystem.mapper.RoomMapper">
+
+    <resultMap id="BaseResultMap" type="com.sdau.hotelsystem.domain.Room">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="num" column="num" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="typeId" column="type_id" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,num,type_id,
+        status,price
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT room.*,room_type.`name` type FROM room INNER JOIN room_type ON room.type_id = room_type.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY `status` ASC
+    </select>
+    <select id="all" resultMap="BaseResultMap">
+        SELECT room.*,room_type.`name` type FROM room INNER JOIN room_type ON room.type_id = room_type.id
+    </select>
+    <select id="selectId" resultType="integer">
+select id
+from room
+</select>
+</mapper>

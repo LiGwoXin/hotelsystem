@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.hotelsystem.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.sdau.hotelsystem.domain.User">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="userpass" column="userpass" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="changeUser" column="change_user" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+            <result property="sex" column="sex" jdbcType="TINYINT"/>
+            <result property="salt" column="salt" jdbcType="VARCHAR"/>
+            <result property="department" column="department" jdbcType="VARCHAR"/>
+            <result property="img" column="img" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,userpass,
+        name,status,create_time,
+        update_time,change_user,tel,
+        department_id,sex,salt
+    </sql>
+    <select id="selectOneByUsername" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        username = #{username,jdbcType=VARCHAR}
+    </select>
+    <update id="updateStatusByUsername">
+update user
+ set status = #{status,jdbcType=NUMERIC}
+where
+username = #{username,jdbcType=VARCHAR}
+</update>
+<!--    <select id="list" resultType="com.sdau.hotelsystem.domain.UserDepartment">-->
+<!--        SELECT user.*,department.name department FROM user INNER JOIN department ON user.department_id = department.id-->
+<!--        <where>-->
+<!--            ${ew.sqlSegment}-->
+<!--        </where>-->
+<!--    </select>-->
+    <select id="list" resultMap="BaseResultMap">
+        SELECT user.*,department.name department FROM user INNER JOIN department ON user.department_id = department.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY `status` ASC
+    </select>
+    <select id="selectRoleById" resultType="String">
+SELECT role.`name` role FROM role INNER JOIN user_role ON user_role.role_id=role.id
+where
+user_role.user_id = #{id,jdbcType=NUMERIC}
+</select>
+    <update id="updateImgById">
+update user
+ set img = #{img,jdbcType=VARCHAR}
+where
+id = #{id,jdbcType=NUMERIC}
+</update>
+    <select id="selectOneById" resultMap="BaseResultMap">
+        SELECT user.*,department.name department FROM user INNER JOIN department ON user.department_id = department.id
+        where
+        user.id = #{id,jdbcType=NUMERIC}
+    </select>
+</mapper>

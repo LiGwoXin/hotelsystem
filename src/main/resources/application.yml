@@ -1,0 +1,46 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    #        driver-class-name: com.mysql.cj.jdbc.Driver
+    #        url: jdbc:mysql://localhost:3306/hotel?serverTimezone=GMT%2B8&useAffectedRows=true
+    #        username: root
+    #        password:
+
+  # 缓存配置 redis
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+
+#  main:
+#    allow-bean-definition-overriding: true
+
+# session cache config
+shiro:
+  redis:
+    sessionLive: 30
+    sessionPrefix: shiro_redis_session_
+    cacheLive: 30
+    cachePrefix: shiro_redis_cache_
+    kickoutPrefix: shiro_redis_kickout_
+    # 验证码缓存时间
+    verificationCodeTime: 5
+    # 踢出缓存key
+    kickOutKey: out
+
+server:
+  port: 8088
+
+#logging:
+#  level:
+#    com.sdau.hotelsystem: DEBUG
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+uploadPathImg: C\:\\img\\     #
+#uploadPathImg: /root/hotel/uploadedImg/   #服务器文件地址
+

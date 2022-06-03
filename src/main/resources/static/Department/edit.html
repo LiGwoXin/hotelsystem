@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>编辑</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../css/public.css">
+	<link rel="stylesheet" href="../css/use.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="width:80%;margin-top: 30px">
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">部门名称</label>
+		<div class="layui-input-block">
+			<input type="hidden" class="id">
+			<input type="text" class="layui-input name" id="name" lay-verify="required|name" placeholder="请输入部门名称">
+		</div>
+	</div>
+	<div class="magb15 layui-col-md4 layui-col-xs12">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-block">
+			<select name="status" class="status" lay-filter="status|required" >
+				<option value="0">正常使用</option>
+				<option value="1">限制使用</option>
+			</select>
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea placeholder="请输入部门描述" class="layui-textarea description" lay-filter="required"></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<div class="layui-input-block">
+			<span class="layui-btn " lay-submit="add" lay-filter="add">保存</span>
+			<button type="reset" class="layui-btn  layui-btn-primary">清空</button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script>
+	layui.use(['form','layer'],function(){
+		let form = layui.form;
+		let layer = layui.layer;
+		let $ = layui.jquery;
+
+		//发送保存请求
+		form.on("submit(add)",function(data){
+
+			$.post("save",{
+				id : $(".id").val(),
+			    name : $(".name").val(),  //名称
+			    status : data.field.status,    //状态
+				description : $(".description").val()    //简介
+			},function(){
+				layer.alert("修改成功!",{yes:function (index) {
+						layer.close(index);
+						parent.layer.closeAll();
+						parent.location.reload();
+					}});
+			})
+		})
+	})
+</script>
+</body>
+</html>

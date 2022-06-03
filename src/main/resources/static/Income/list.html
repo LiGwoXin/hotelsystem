@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+</head>
+<body>
+
+	<div id="main"
+		style="width: 600px; height: 400px; display: inline-block;"></div>
+	<div id="main1"
+		style="width: 600px; height: 400px; display: inline-block;"></div>
+	<div id="main2"
+		style="width: 600px; height: 400px; display: inline-block;"></div>
+
+
+	<script src="../js/echarts.min.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<!-- 声明layui需要的对象 -->
+<!--	<script src="js/layuibase.js"></script>-->
+	<script type="text/javascript">
+		layui.use(['form', 'layer', 'table', 'laytpl'], function() {
+			var form = layui.form,
+					layer = parent.layer === undefined ? layui.layer : top.layer,
+					$ = layui.jquery,
+					laytpl = layui.laytpl,
+					table = layui.table;
+			// 基于准备好的dom，初始化echarts实例
+			var myChart = echarts.init(document.getElementById('main'));
+			var myChart1 = echarts.init(document.getElementById('main1'));
+			var myChart2 = echarts.init(document.getElementById('main2'));
+			var days = [];
+			//push      pop删除
+			var money = [];
+			$.ajax({
+				url: "../Order/incomeday",
+				async: false,
+				//data:请求参数 月份
+				success: function (result) {
+					if (result) {
+						for (var i = 0; i < result.length; i++) {
+							days.push(result[i].startdate);
+							money.push(result[i].money);
+						}
+					}
+				}
+
+			});
+			// 指定图表的配置项和数据
+			//ajax设置option的属性
+			var option = {
+				color: ['#0e9c8f'],
+				title: {
+					text: '日营业额报表'
+				},
+				tooltip: {},
+				legend: {
+					data: ['销量']
+				},
+				xAxis: {
+					data: days
+				},
+				yAxis: {},
+				//从数据库里面查
+				series: [{
+					name: '收入',
+					type: 'line', //bar柱状图
+					data: money,
+					smooth: true,
+
+				}, {
+					name: '收入',
+					type: 'bar', //bar柱状图
+					data: money,
+				},
+				]
+			};
+
+			var month = [];
+			var money_month = [];
+			$.ajax({
+				url: "../Order/incomemonth",
+				async: false,
+				success: function (result) {
+					if (result) {
+						for (var i = 0; i < result.length; i++) {
+							month.push(result[i].startdate);
+							money_month.push(result[i].money);
+						}
+					}
+
+				}
+			});
+			var option1 = {
+				title: {
+					text: '月营业额报表'
+				},
+				xAxis: {
+					type: 'category',
+					data: month,
+				},
+				yAxis: {
+					type: 'value'
+				},
+				series: [{
+					data: money_month,
+					type: 'line',
+				}]
+			};
+
+			var year = [];
+			var money_year = [];
+			$.ajax({
+				url: "../Order/incomeyear",
+				async: false,
+				success: function (result) {
+					if (result) {
+						for (var i = 0; i < result.length; i++) {
+							year.push(result[i].startdate);
+							money_year.push(result[i].money);
+						}
+					}
+
+				}
+			});
+
+			var option2 = {
+				title: {
+					text: '年营业额报表'
+				},
+				xAxis: {
+					type: 'category',
+					data: year,
+				},
+				yAxis: {
+					type: 'value'
+				},
+				series: [{
+					data: money_year,
+					type: 'line',
+				}]
+			};
+
+			// 使用刚指定的配置项和数据显示图表。
+			myChart.setOption(option);
+			myChart1.setOption(option1);
+			myChart2.setOption(option2);
+		})
+	</script>
+</body>
+</html>
